@@ -4,9 +4,9 @@ CREATE DATABASE tracker_db;
 
 USE tracker_db;
 
-CREATE TABLE department (
+CREATE TABLE departments (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    dept_name VARCHAR(30)
+    name VARCHAR(30)
 );
 
 CREATE TABLE roles (
@@ -16,7 +16,7 @@ CREATE TABLE roles (
     department_id INT
 );
 
-CREATE TABLE employee (
+CREATE TABLE employees (
     id INT PRIMARY KEY,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
