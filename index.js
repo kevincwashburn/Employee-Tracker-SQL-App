@@ -28,9 +28,6 @@ const menuList = [
     }
 ];
 
-
-
-
 const createEmployee = () => {
     connection.query("SELECT * FROM roles", function (err, roleRes) {
         connection.query("SELECT * FROM employees", function (err, employeeRes) {
@@ -162,6 +159,43 @@ const createRole = () => {
                 )
             })
         })
+};
+
+const updateEmployeeRole = () => {
+    connection.query("SELECT * FROM employees", function (err, employeesRes) {
+        const employeeArray = employeesRes.map(({ id, last_name, first_name }) => {
+            return { name: `${last_name}, ${first_name}`, value: id }
+        })
+        connection.query("SELECT * FROM roles", function (err, rolesRes) {
+            const rolesArray = rolesRes.map(({ id, title }) => ({ value: id, name: title }))
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "id",
+                    message: "Select employee to update their role",
+                    choices: employeeArray
+                },
+                {
+                    type: "list",
+                    name: "roleId",
+                    message: "Select a new role",
+                    choices: rolesArray
+                }
+            ]).then((ans) => {
+                connection.query(
+                "UPDATE employees SET role_id = ? WHERE id = ?",
+                    [
+                        ans.roleId,
+                        ans.id
+                    ],
+                    (err, res) => {
+                        if (err) throw err;
+                        chooseAction();
+                    }
+                )
+            })
+        })
+    })
 };
 
 const init = () => {
