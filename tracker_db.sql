@@ -5,22 +5,22 @@ CREATE DATABASE tracker_db;
 USE tracker_db;
 
 CREATE TABLE departments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(30)
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE roles (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(30),
-    salary DECIMAL,
-    department_id INT
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL(10,2) NOT NULL,
+    department_id INT NOT NULL
 );
 
 CREATE TABLE employees (
-    id INT PRIMARY KEY,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
-    role_id INT,
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INT NOT NULL,
     manager_id INT
 )
 
