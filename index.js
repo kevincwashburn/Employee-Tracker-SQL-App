@@ -1,6 +1,5 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const consoleTable = require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -161,6 +160,36 @@ const createRole = () => {
         })
 };
 
+const viewAllEmployees = () => {
+    console.log("viewing all employees...\n");
+    connection.query("SELECT employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON manager.id = employees.manager_id",
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            chooseAction();
+        });
+};
+
+const viewRoles = () => {
+    console.log("viewing roles...\n");
+    connection.query("SELECT roles.title, roles.salary, departments.name AS department FROM roles INNER JOIN departments ON roles.department_id = departments.id",
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            chooseAction();
+        });
+};
+
+const viewDepartments = () => {
+    console.log("viewing departments...\n");
+    connection.query("SELECT name FROM departments",
+        function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            chooseAction();
+        });
+}
+
 const updateEmployeeRole = () => {
     connection.query("SELECT * FROM employees", function (err, employeesRes) {
         const employeeArray = employeesRes.map(({ id, last_name, first_name }) => {
@@ -206,50 +235,34 @@ const init = () => {
 };
 
 const chooseAction = () => {
-    inquirer.prompt(menuList).then(function (res) {
-
-        if (res.menu === "View All Employees") {
-            console.log("viewing all employees...\n");
-            connection.query("SELECT employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON manager.id = employees.manager_id",
-                function (err, res) {
-                    if (err) throw err;
-                    console.table(res);
-                    chooseAction();
-                });
-
-        } else if (res.menu === "View Roles") {
-            console.log("viewing roles...\n");
-            connection.query("SELECT roles.title, roles.salary, departments.name AS department FROM roles INNER JOIN departments ON roles.department_id = departments.id",
-                function (err, res) {
-                    if (err) throw err;
-                    console.table(res);
-                    chooseAction();
-                });
-
-        } else if (res.menu === "View Departments") {
-            console.log("viewing departments...\n");
-            connection.query("SELECT name FROM departments",
-                function (err, res) {
-                    if (err) throw err;
-                    console.table(res);
-                    chooseAction();
-                });
-
-        } else if (res.menu === "Add Employee") {
-            createEmployee();
-
-        } else if (res.menu === "Add Department") {
-            createDepartment();
-
-        } else if (res.menu === "Add Role") {
-            createRole();
-
-        } else if (res.menu === "Update Employee Role") {
-            updateEmployeeRole();
-        } else {
-            connection.end();
+    inquirer.prompt(menuList).then((res) => {
+        switch (res.menu) {
+            case "View All Employees":
+                viewAllEmployees();
+                break;
+            case "View Roles":
+                viewRoles();
+                break;
+            case "View Departments":
+                viewDepartments();
+                break;
+            case "Add Employee":
+                createEmployee();
+                break;
+            case "Add Department":
+                createDepartment();
+                break;
+            case "Add Role":
+                createRole();
+                break;
+            case "Update Employee Role":
+                updateEmployeeRole();
+                break;
+            case "Exit":
+                connection.end();
         }
     })
-}
+};
+
 
 init();
