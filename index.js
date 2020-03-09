@@ -66,7 +66,7 @@ const createEmployee = () => {
                 },
                 {
                     type: "list",
-                    message: "employee's role: ",
+                    message: "employee's manager: ",
                     name: "managerId",
                     choices: employeeList
                 }
